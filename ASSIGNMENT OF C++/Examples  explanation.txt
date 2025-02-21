@@ -1,0 +1,25 @@
+Example 1 explanation
+this hello world displayed with different main.cpp(c++ language) where we use
+#include <iostream>: include input, output library , this include library that aloows us to use cout
+(to print message) and cin(to read an integer from standard input)
+using namespace std;:use standard namespace, this makes writing simpler
+int main():main function , this is where program start.
+return 0;:this indicate successfully execution.
+
+Example 2 explanation
+Using data type and Valuables to display the output and we can not use special characters or space and even case sensitive 
+because Age is different from age, the first one start with upper case and the second one start with lower case.
+must start with a letter or under scores(_).
+we have to declare their data type like int, float, double, bool, string.
+
+Example 3 explanation.
+For this one ,how it works:	cin >> name; ? Takes user input for the variable name. 
+•	cin >> age; ? Takes user input for age. 
+•	The values are then printed back to the user. 
+here we try running this program and enter different names and ages!
+
+Example 4 explanation.
+For this one ,how it works:	cin >> name; ? Takes user input for the variable name. 
+•	cin >> age; ? Takes user input for age. 
+•	The values are then printed back to the user. 
+here we try running this program and enter different names and ages!
