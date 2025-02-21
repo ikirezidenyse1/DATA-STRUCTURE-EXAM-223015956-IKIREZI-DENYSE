@@ -1,6 +1,0 @@
-this hello world displayed with different main.cpp(c++ language) where we use
-#include <iostream>: include input, output library , this include library that aloows us to use cout
-(to print message) and cin(to read an integer from standard input)
-using namespace std;:use standard namespace, this makes writing simpler
-int main():main function , this is where program start.
-return 0;:this indicate successfully execution.
