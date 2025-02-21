@@ -1,4 +1,0 @@
-Using data type and Valuables to display the output and we can not use special characters or space and even case sensitive 
-because Age is different from age, the first one start with upper case and the second one start with lower case.
-must start with a letter or under scores(_).
-we have to declare their data type  like int,float,double,bool,string.
