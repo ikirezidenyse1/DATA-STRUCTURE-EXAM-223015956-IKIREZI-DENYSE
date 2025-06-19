@@ -174,5 +174,5 @@ int main() {
     delete[] calculators;      // Delete calculator array
 
     return 0; // End of program
-}
+} 
 
