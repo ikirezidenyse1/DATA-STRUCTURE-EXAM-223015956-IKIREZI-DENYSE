@@ -1,1 +1,178 @@
+#include <iostream>     // Task: Enable input/output
+                       // Done using standard I/O library
+#include <cstring>      // Task: Handle C-style strings
+                       // Done using C string functions (like strcpy)
+using namespace std;    // Task: Avoid prefixing std::
+                       // Done by using global `std` namespace
+
+// Define structure to store vehicle data
+struct VehicleInfo {
+    char vin[17];       // Task: Store vehicle identification number
+                        // Max 17 characters, defined as char array
+    int age;            // Task: Store age of the vehicle
+                        // Done using integer type
+    char type[10];      // Task: Store vehicle type (e.g., SUV)
+                        // Done using fixed-size char array
+};
+
+// Define rate bracket structure used for pricing
+struct RateBracket {
+    float minAge;       // Task: Lower bound of vehicle age
+    float maxAge;       // Task: Upper bound of vehicle age
+    float rate;         // Task: Base insurance rate for this age range
+};
+
+// Abstract base class for insurance calculators
+class InsuranceCalculator {
+protected:
+    RateBracket* brackets; // Task: Store dynamic list of rate brackets
+                           // Done using a pointer to RateBracket array
+    int count;             // Task: Count number of brackets
+                           // Keeps track of how many brackets exist
+
+public:
+    // Constructor to initialize variables
+    InsuranceCalculator() {
+        brackets = NULL;   // No brackets initially
+        count = 0;         // Zero brackets to start
+    }
+
+    // Abstract function to be implemented by subclasses
+    virtual float quote(const VehicleInfo* info) = 0; // Task: Calculate insurance quote
+
+    // Function to add a rate bracket
+    void addBracket(RateBracket rb) {
+        // Allocate new array of size count + 1
+        RateBracket* newBrackets = new RateBracket[count + 1];
+
+        // Copy old brackets into new array
+        for (int i = 0; i < count; i++) {
+            newBrackets[i] = brackets[i];
+        }
+
+        // Add new bracket at end
+        newBrackets[count] = rb;
+
+        // Delete old bracket array
+        delete[] brackets;
+
+        // Point to new array
+        brackets = newBrackets;
+
+        // Increase count
+        count++;
+    }
+
+    // Function to remove bracket at given index
+    void removeBracket(int index) {
+        // Check if index is valid
+        if (index < 0 || index >= count) return;
+
+        // Create new array with one less element
+        RateBracket* newBrackets = new RateBracket[count - 1];
+        int j = 0;
+
+        // Copy all brackets except the one to remove
+        for (int i = 0; i < count; i++) {
+            if (i != index) {
+                newBrackets[j] = brackets[i];
+                j++;
+            }
+        }
+
+        // Delete old array and update pointer
+        delete[] brackets;
+        brackets = newBrackets;
+
+        // Decrease count
+        count--;
+    }
+
+    // Virtual destructor to clean up memory
+    virtual ~InsuranceCalculator() {
+        delete[] brackets; // Free dynamically allocated memory
+    }
+
+protected:
+    // Helper function to find matching rate based on vehicle age
+    float findRateByAge(int age) {
+        for (int i = 0; i < count; i++) {
+            RateBracket* p = brackets + i; // Pointer to current bracket
+
+            // Check if age is within this bracket
+            if (age >= p->minAge && age <= p->maxAge) {
+                return p->rate;            // Return matching rate
+            }
+        }
+        return 0.0f;                       // Return 0 if no bracket matches
+    }
+};
+
+// Third-party insurance: adds 10% to base rate
+class ThirdPartyCalculator : public InsuranceCalculator {
+public:
+    float quote(const VehicleInfo* info) {
+        float baseRate = findRateByAge(info->age); // Get base rate for vehicle age
+        return baseRate * 1.1f;                     // Add 10% markup
+    }
+};
+
+// Comprehensive insurance: adds 50% to base rate
+class ComprehensiveCalculator : public InsuranceCalculator {
+public:
+    float quote(const VehicleInfo* info) {
+        float baseRate = findRateByAge(info->age); // Get base rate for vehicle age
+        return baseRate * 1.5f;                    // Add 50% markup
+    }
+};
+
+int main() {
+    // Define and initialize first vehicle
+    VehicleInfo car1;
+    strcpy(car1.vin, "1HGCM82633A004352"); // Copy VIN
+    car1.age = 3;                          // Set age
+    strcpy(car1.type, "Sedan");            // Copy type
+
+    // Define and initialize second vehicle
+    VehicleInfo car2;
+    strcpy(car2.vin, "JH4KA8260MC123456"); // Copy VIN
+    car2.age = 12;                         // Set age
+    strcpy(car2.type, "SUV");              // Copy type
+
+    // Create array of calculator pointers
+    InsuranceCalculator** calculators = new InsuranceCalculator*[2];
+
+    // Assign derived class objects
+    calculators[0] = new ThirdPartyCalculator();       // Third-party calc
+    calculators[1] = new ComprehensiveCalculator();    // Comprehensive calc
+
+    // Define three rate brackets
+    RateBracket r1 = {0, 5, 1000};    // Vehicles aged 0–5: 1000 RWF
+    RateBracket r2 = {6, 10, 800};    // Vehicles aged 6–10: 800 RWF
+    RateBracket r3 = {11, 20, 600};   // Vehicles aged 11–20: 600 RWF
+
+    // Add brackets to both calculators
+    for (int i = 0; i < 2; i++) {
+        calculators[i]->addBracket(r1);
+        calculators[i]->addBracket(r2);
+        calculators[i]->addBracket(r3);
+    }
+
+    // Show quotes for first vehicle
+    cout << "Vehicle 1 (Sedan, Age 3):" << endl;
+    cout << "  Third Party Quote: " << calculators[0]->quote(&car1) << " RWF" << endl;
+    cout << "  Comprehensive Quote: " << calculators[1]->quote(&car1) << " RWF" << endl;
+
+    // Show quotes for second vehicle
+    cout << "\nVehicle 2 (SUV, Age 12):" << endl;
+    cout << "  Third Party Quote: " << calculators[0]->quote(&car2) << " RWF" << endl;
+    cout << "  Comprehensive Quote: " << calculators[1]->quote(&car2) << " RWF" << endl;
+
+    // Clean up dynamically allocated memory
+    delete calculators[0];     // Delete third-party object
+    delete calculators[1];     // Delete comprehensive object
+    delete[] calculators;      // Delete calculator array
+
+    return 0; // End of program
+}
 
